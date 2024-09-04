@@ -3,22 +3,16 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class a0874WalkingRobot {
-    private class Obstacles{
+    private static class Obstacles{
         HashMap<Integer, Set<Integer>> verticalObstacles = new HashMap<>();
         HashMap<Integer, Set<Integer>> horizontalObstacles = new HashMap<>();
         public Obstacles(int[][] obstacles)
         {
-            for(int i = 0 ; i < obstacles.length; i++)
-            {
-                int x = obstacles[i][0];
-                int y = obstacles[i][1];
-                if(verticalObstacles.get(x)==null){
-                    verticalObstacles.put(x,new HashSet<Integer>());
-                }
-                if(horizontalObstacles.get(y)==null)
-                {
-                    horizontalObstacles.put(y, new HashSet<Integer>());
-                }
+            for (int[] obstacle : obstacles) {
+                int x = obstacle[0];
+                int y = obstacle[1];
+                verticalObstacles.computeIfAbsent(x, _ -> new HashSet<>());
+                horizontalObstacles.computeIfAbsent(y, _ -> new HashSet<>());
                 horizontalObstacles.get(y).add(x);
                 verticalObstacles.get(x).add(y);
             }
@@ -41,22 +35,26 @@ public class a0874WalkingRobot {
         int positionY=0;
         int maxDistance = 0;
         int direction = 0;
-        for(int i = 0 ; i < commands.length;i++)
-        {
-            int currCommand = commands[i];
-            if(currCommand<0)
-                direction=rotate(direction,currCommand);
-            else{
-                if(!obstaclesHelper.obstaclesInTheWay(positionX,positionY,direction))
-                {
-                    switch (direction){
-                        case 0:positionY+=currCommand;break;
-                        case 1:positionX+=currCommand;break;
-                        case 2:positionY-=currCommand;break;
-                        case 3:positionX-=currCommand;break;
+        for (int currCommand : commands) {
+            if (currCommand < 0)
+                direction = rotate(direction, currCommand);
+            else {
+                if (!obstaclesHelper.obstaclesInTheWay(positionX, positionY, direction)) {
+                    switch (direction) {
+                        case 0:
+                            positionY += currCommand;
+                            break;
+                        case 1:
+                            positionX += currCommand;
+                            break;
+                        case 2:
+                            positionY -= currCommand;
+                            break;
+                        case 3:
+                            positionX -= currCommand;
+                            break;
                     }
-                }
-                else {
+                } else {
                     for (int j = 0; j < currCommand; j++) {
                         switch (direction) {
                             case 0:
@@ -78,9 +76,9 @@ public class a0874WalkingRobot {
                         }
                     }
                 }
-                int currDistance = positionY*positionY + positionX*positionX;
-                if(currDistance > maxDistance)
-                    maxDistance= currDistance;
+                int currDistance = positionY * positionY + positionX * positionX;
+                if (currDistance > maxDistance)
+                    maxDistance = currDistance;
             }
         }
         return maxDistance;
